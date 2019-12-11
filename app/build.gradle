@@ -27,4 +27,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    // add SDKs for desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
+
+apply plugin: 'com.google.gms.google-services'
