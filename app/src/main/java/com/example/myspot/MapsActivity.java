@@ -37,6 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
+    private MarkerOptions marker = new MarkerOptions().position(this.DEFAAULT_LOCATION);
+
     private Location mLastKnownLocation;
 
     private static final String KEY_CAMERA_POSITION = "camera_position";
@@ -78,8 +80,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getDeviceLocation();
 
         // Add a marker in UoM
-        mMap.addMarker(new MarkerOptions().position(this.DEFAAULT_LOCATION).title("Marker in UoM"));
+        mMap.addMarker(marker);
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                marker = new MarkerOptions().position(latLng);
+                mMap.clear();
+                mMap.addMarker(marker);
+            }
+        });
     }
+
+
 
     private void getDeviceLocation() {
         /*
@@ -160,10 +172,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                mLocationPermissionGranted = false;
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
         }
+        updateLocationUI();
     }
 
     @Override
