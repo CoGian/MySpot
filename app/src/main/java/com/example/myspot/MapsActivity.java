@@ -6,6 +6,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,7 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private CameraPosition mCameraPosition;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private final LatLng DEFAAULT_LOCATION = new LatLng(40.6250129,22.9601085);
@@ -41,8 +42,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Location mLastKnownLocation;
 
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
+    private FloatingActionButton addButton, locationButton, markerButton;
+    private Animation fabOpen, fabClose, fabCW, fabCounterCW;
+    private TextView markerLabel, locationLabel;
+    private boolean isMenuOpen = false;
+
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +56,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // set on click listener to floatingAddButton (calls alarm activity)
-        FloatingActionButton floatingAddButton = findViewById(R.id.floatingAddButton) ;
-        floatingAddButton.setOnClickListener(new View.OnClickListener() {
+        // set on click listener to floatingAddButton. Expands menu and calls alarm activity
+        addButton = findViewById(R.id.floatingAddButton);
+        locationButton = findViewById(R.id.floatingLocationButton);
+        markerButton = findViewById(R.id.floatingMarkerButton);
+
+        markerLabel = findViewById(R.id.markerLabel);
+        locationLabel = findViewById(R.id.locationLabel);
+
+        fabOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fabClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        fabCW = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_clock);
+        fabCounterCW = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_anticlock);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MapsActivity.this, AlarmActivity.class);
+
+                //Open menu and get get location
+                if(isMenuOpen){
+                    locationLabel.setVisibility(View.INVISIBLE);
+                    markerLabel.setVisibility(View.INVISIBLE);
+                    locationButton.startAnimation(fabClose);
+                    locationButton.setClickable(false);
+                    markerButton.startAnimation(fabClose);
+                    markerButton.setClickable(false);
+                    addButton.startAnimation(fabCounterCW);
+                    isMenuOpen = false;
+                } else{
+                    locationLabel.setVisibility(View.VISIBLE);
+                    markerLabel.setVisibility(View.VISIBLE);
+                    locationButton.startAnimation(fabOpen);
+                    locationButton.setClickable(true);
+                    markerButton.startAnimation(fabOpen);
+                    markerButton.setClickable(true);
+                    addButton.startAnimation(fabCW);
+                    isMenuOpen = true;
+                }
+            }
+        });
+
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(MapsActivity.this, AlarmActivity.class)
+                        .putExtra("location", new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
+
+                startActivity(intent);
+            }
+        });
+
+        markerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(MapsActivity.this, AlarmActivity.class)
+                        .putExtra("location", marker.getPosition());
+
                 startActivity(intent);
             }
         });
@@ -91,8 +145,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
-
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -100,24 +152,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          */
         try {
             if (mLocationPermissionGranted) {
-//                Task locationResult = mFusedLocationProviderClient.getLastLocation();
-//                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if (task.isSuccessful()) {
-//                            // Set the map's camera position to the current location of the device.
-//                            mLastKnownLocation = task.getResult();
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-//                                    new LatLng(mLastKnownLocation.getLatitude(),
-//                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-//                        } else {
-//                            Log.d("LOCATION", "Current location is null. Using defaults.");
-//                            Log.e("LOCATION", "Exception: %s", task.getException());
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAAULT_LOCATION, DEFAULT_ZOOM));
-//                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-//                        }
-//                    }
-//                });
                 Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override

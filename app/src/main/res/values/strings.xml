@@ -3,4 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="AlarmOff">Alarm Off</string>
     <string name="AlarmOn">Alarm On</string>
+    <string name="marker">Add from selected marker</string>
+    <string name="location">Add from current loacation</string>
+    <string name="closeMenu">Close menu</string>
 </resources>
