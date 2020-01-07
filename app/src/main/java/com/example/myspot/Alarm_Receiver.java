@@ -3,6 +3,7 @@ package com.example.myspot;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 public class Alarm_Receiver extends BroadcastReceiver {
@@ -15,12 +16,12 @@ public class Alarm_Receiver extends BroadcastReceiver {
         Boolean alarmOn = intent.getExtras().getBoolean("alarmOn");
 
         //create an intent to the ringtone service
-        Intent service_intent = new Intent(context,RingtonePlayingService.class);
+        Intent service_intent = new Intent(context, NotificationService.class);
 
         // pass the extra
         service_intent.putExtra("alarmOn",alarmOn);
 
         //start the ringtone service
-        context.startService(service_intent);
+        NotificationService.enqueueWork(context,service_intent);
     }
 }
