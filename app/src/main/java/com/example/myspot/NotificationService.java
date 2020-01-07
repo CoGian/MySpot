@@ -110,27 +110,7 @@ public class NotificationService extends JobIntentService {
 
             this.isRunning = true;
         }
-        // if music playing and user press alarm off  , music should stop
-        else if(this.isRunning && startId == 0 ){
-            Log.e("ALARM","There is music an we don't want");
 
-
-            this.isRunning = false;
-        }
-        // if random button pressed
-        //  if there is no music playing and user press alarm off , do nothing
-        else if(!this.isRunning && startId == 0){
-            Log.e("ALARM","There is no music and we press alarm off");
-            this.isRunning = false;
-        }
-        // if music playing and user press alarm on , do nothing
-        else if (this.isRunning && startId == 1){
-            Log.e("ALARM","There is  music an we press alarm on ");
-            this.isRunning = true;
-        }
-        else{
-            Log.e("ALARM","Somehow you reach that ");
-        }
 
 
     }

@@ -20,7 +20,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AlarmActivity"></activity>
+        <activity android:name=".AlarmActivity" ></activity>
+
+        android:configChanges="orientation|screenSize|keyboardHidden"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/api_keys.xml").
