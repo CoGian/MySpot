@@ -20,6 +20,9 @@ public class AlarmActivity extends AppCompatActivity {
     TimePicker alarm_timePicker ;
     Context context;
     PendingIntent pendingIntent;
+    Calendar calendar;
+    Intent rec_intent;
+    Switch sb ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +36,13 @@ public class AlarmActivity extends AppCompatActivity {
         alarm_timePicker = findViewById(R.id.alarmTimePicker);
 
         // create an instance of a calendar
-        final Calendar calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance();
 
         // create an intent to the Alarm Receiver
-        final Intent rec_intent = new Intent(this.context,Alarm_Receiver.class);
+        rec_intent = new Intent(this.context,Alarm_Receiver.class);
+
         // initialize switch
-        final Switch sb = findViewById(R.id.switchAlarm);
+        sb = findViewById(R.id.switchAlarm);
 
 
         // create on checked change listener
@@ -51,11 +55,12 @@ public class AlarmActivity extends AppCompatActivity {
                     // setting calendar instance with the hour and minutes that picked
                     calendar.set(Calendar.HOUR_OF_DAY,alarm_timePicker.getHour());
                     calendar.set(Calendar.MINUTE,alarm_timePicker.getMinute());
-
+                    calendar.set(Calendar.SECOND,0);
                     // get the string values of hour and minute
                     int hour = alarm_timePicker.getHour();
                     int minute = alarm_timePicker.getMinute();
 
+                    rec_intent.putExtra("alarmOn",true);
                     // convert the int values to string
                     String hour_str = String.valueOf(hour);
                     String min_str = String.valueOf(minute);
@@ -75,6 +80,9 @@ public class AlarmActivity extends AppCompatActivity {
                     sb.setText("Alarm Off");
 
                     alarmManager.cancel(pendingIntent);
+
+                    rec_intent.putExtra("alarmOn",false);
+                    sendBroadcast(rec_intent);
                 }
             }
         });
