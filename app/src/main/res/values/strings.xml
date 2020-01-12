@@ -6,4 +6,6 @@
     <string name="marker">Add from selected marker</string>
     <string name="location">Add from current loacation</string>
     <string name="closeMenu">Close menu</string>
+    <string name="saved_spot">Saved spot</string>
+    <string name="settings">Settings</string>
 </resources>
