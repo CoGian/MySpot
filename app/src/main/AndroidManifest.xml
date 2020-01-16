@@ -21,7 +21,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:configChanges="orientation|screenSize|keyboardHidden">
-        <activity android:name=".AlarmActivity" ></activity>
+        <activity
+            android:name=".AlarmActivity"
+            android:parentActivityName=".MapsActivity"/>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

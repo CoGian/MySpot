@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -158,6 +159,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.map_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_saved_spot:
+                Toast.makeText(this, "Saved Spot selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void getDeviceLocation() {
