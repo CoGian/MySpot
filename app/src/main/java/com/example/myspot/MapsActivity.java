@@ -1,7 +1,9 @@
 package com.example.myspot;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +30,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -43,7 +46,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
-    private MarkerOptions marker = new MarkerOptions().position(this.DEFAAULT_LOCATION);
+    private Marker marker;
 
     private Location mLastKnownLocation;
 
@@ -58,6 +61,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        DB.setDb(getBaseContext().openOrCreateDatabase(DB.getDbName(), Context.MODE_PRIVATE, null));
+        DB.createAndOrLoadDB();
 
         Toolbar mapToolbar = findViewById(R.id.mapToolbar);
         setSupportActionBar(mapToolbar);
@@ -143,13 +148,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getDeviceLocation();
 
         // Add a marker in UoM
-        mMap.addMarker(marker);
+        marker = mMap.addMarker(new MarkerOptions().position(this.DEFAAULT_LOCATION));
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                marker = new MarkerOptions().position(latLng);
-                mMap.clear();
-                mMap.addMarker(marker);
+                marker.setPosition(latLng);
             }
         });
     }
