@@ -8,6 +8,24 @@
     tools:context=".AlarmActivity">
 
     <TextView
+        android:id="@+id/finalCostView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="Final cost: 0 €"
+        android:textColor="#7191DB"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/alarmTimePicker"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCostPerHour"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <TextView
         android:id="@+id/costPerHourView"
         android:layout_width="155dp"
         android:layout_height="31dp"
