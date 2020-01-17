@@ -7,6 +7,20 @@
     android:background="#BA000000"
     tools:context=".AlarmActivity">
 
+    <TextView
+        android:id="@+id/finalCostView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Final cost: 0 €"
+        android:textColor="#7191DB"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTextInitialCost"
+        app:layout_constraintTop_toBottomOf="@+id/switchAlarm" />
+
     <include
         android:id="@+id/alarmToolbar"
         app:layout_constraintEnd_toEndOf="parent"
