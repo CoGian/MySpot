@@ -36,6 +36,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -61,8 +65,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        DB.setDb(getBaseContext().openOrCreateDatabase(DB.getDbName(), Context.MODE_PRIVATE, null));
-        DB.createAndOrLoadDB();
+
+        DB.createAndOrLoadDB(getBaseContext());
+
+        //test
+        DB.addParking(new Parking(
+                this.DEFAAULT_LOCATION,
+                -1,
+                -1,
+                Calendar.getInstance(),
+                -1,
+                false,
+                true
+        ));
 
         Toolbar mapToolbar = findViewById(R.id.mapToolbar);
         setSupportActionBar(mapToolbar);

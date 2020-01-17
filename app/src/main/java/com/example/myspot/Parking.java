@@ -24,5 +24,31 @@ public class Parking {
         this.active = active;
     }
 
+    public LatLng getLocation() {
+        return location;
+    }
 
+    public double getInitialCost() {
+        return initialCost;
+    }
+
+    public double getFinalCost() {
+        return finalCost;
+    }
+
+    public Calendar getTime() {
+        return time;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public boolean isAlarm() {
+        return alarm;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
 }

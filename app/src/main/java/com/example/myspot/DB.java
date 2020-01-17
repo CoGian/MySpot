@@ -1,5 +1,6 @@
 package com.example.myspot;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -16,24 +17,27 @@ public abstract class DB {
     private final static String DB_NAME = "spots.db";
     private static SQLiteDatabase db;
     private static ArrayList<Parking> spots = new ArrayList<>();
-    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss", Locale.ENGLISH);
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-    public static void createAndOrLoadDB(){
-        db.execSQL("CREATE TABLE IF NOT EXISTS \"parking\" (\n" +
-                "\t\"id\"\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
-                "\t\"latitude\"\tREAL NOT NULL,\n" +
-                "\t\"longitude\"\tREAL NOT NULL,\n" +
-                "\t\"initialCost\"\tREAL,\n" +
-                "\t\"totalCost\"\tREAL,\n" +
-                "\t\"time\"\tTEXT NOT NULL,\n" +
-                "\t\"duration\"\tINTEGER,\n" +
-                "\t\"alarm\"\tINTEGER,\n" +
-                "\t\"active\"\tINTEGER NOT NULL\n" +
-                ")");
+    public static void createAndOrLoadDB(Context baseContext){
+        db = baseContext.openOrCreateDatabase(getDbName(), Context.MODE_PRIVATE, null);
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS parking (" +
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE," +
+                "latitude REAL NOT NULL," +
+                "longitude REAL NOT NULL," +
+                "initialCost REAL NOT NULL," +
+                "totalCost REAL NOT NULL," +
+                "time TEXT NOT NULL," +
+                "duration INTEGER NOT NULL," +
+                "alarm INTEGER NOT NULL," +
+                "active INTEGER NOT NULL" +
+                ");");
 
         readDB();
     }
 
+    //Updates spots array with current data from table "parking"
     private static void readDB() {
         Cursor cursor = db.rawQuery("SELECT " +
                                     //columnIndex
@@ -45,7 +49,7 @@ public abstract class DB {
                 "duration, " +      //5
                 "alarm, " +         //6
                 "active " +         //7
-                "FROM parking", null);
+                "FROM parking;", null);
 
         while (cursor.moveToNext()){
             //parse time string from database to Calendar object
@@ -57,7 +61,7 @@ public abstract class DB {
                 e.printStackTrace();
             }
 
-            //create new instances o parking objects from database and add them to spots list
+            //create new instances of parking objects from database and add them to spots list
             spots.add(new Parking(
                     new LatLng(cursor.getDouble(0),cursor.getDouble(1)),//location: columns latitude, longitude
                     cursor.getDouble(2),//initialCost: column initialCost
@@ -72,11 +76,30 @@ public abstract class DB {
         cursor.close();
     }
 
-    public static void setDb(SQLiteDatabase database) {
-        db = database;
+    public static void addParking(Parking parking){
+        spots.add(parking);
+
+        db.execSQL("INSERT INTO parking(" +
+                "\"latitude\",\"longitude\",\"initialCost\",\"totalCost\",\"time\",\"duration\",\"alarm\",\"active\"" +
+                ") " +
+                "VALUES " +
+                "(" +
+                parking.getLocation().latitude +
+                "," + parking.getLocation().longitude +
+                "," + parking.getInitialCost() +
+                "," + parking.getFinalCost() +
+                ",\"" + simpleDateFormat.format(parking.getTime().getTime()) + "\"" +
+                "," + parking.getDuration() +
+                "," + (parking.isAlarm()?1:0) +
+                "," + (parking.isActive()?1:0) +
+                ");");
     }
 
     public static String getDbName() {
         return DB_NAME;
+    }
+
+    public static SimpleDateFormat getSimpleDateFormat() {
+        return simpleDateFormat;
     }
 }
