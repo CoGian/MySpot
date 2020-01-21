@@ -44,6 +44,7 @@ public class AlarmActivity extends AppCompatActivity {
     private  int minute ;
     private  float cost_per_hour ;
     private  float initial_cost ;
+    private  int duration ;
     private  boolean alarmOn = false;
     private LatLng location;
 
@@ -243,8 +244,11 @@ public class AlarmActivity extends AppCompatActivity {
         if (curr_cal.getTimeInMillis()>calendar.getTimeInMillis())
             calendar.add(Calendar.DAY_OF_YEAR,1);
 
+        //duration in minutes
+        duration = Math.round((calendar.getTimeInMillis()-curr_cal.getTimeInMillis())/ 60000);
+
         // calculate final cost
-        double final_cost = initial_cost + floor((calendar.getTimeInMillis()-curr_cal.getTimeInMillis())/ 3600000 ) * cost_per_hour;
+        double final_cost = initial_cost + Math.round(floor(duration/60)) * cost_per_hour;
 
         return final_cost;
     }
@@ -258,10 +262,11 @@ public class AlarmActivity extends AppCompatActivity {
                         initial_cost,
                         calc_final_cost(),
                         Calendar.getInstance(),
-                        hour * 60 + minute,
+                        duration,
                         alarmOn,
                         true
                 ));
+                startActivity(new Intent(this, MapsActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
