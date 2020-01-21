@@ -1,9 +1,7 @@
 package com.example.myspot;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,11 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,16 +34,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private final LatLng DEFAAULT_LOCATION = new LatLng(40.6250129,22.9601085);
+    private final LatLng DEFAULT_LOCATION = new LatLng(40.6250129,22.9601085);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -152,12 +146,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        // Add a marker in UoM
-        marker = mMap.addMarker(new MarkerOptions().position(this.DEFAAULT_LOCATION));
+        Parking latestParking = DB.getLatestParking();
+
+        // Add a marker for the most recent parking
+        marker = mMap.addMarker(new MarkerOptions()
+                .position(latestParking.getLocation())
+                .title(latestParking.getFinalCost() + "€")
+                .snippet("Duration: " + latestParking.getDuration() + " minutes"));
+
+        //move marker on long click
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                marker.setPosition(latLng);
+                mMap.clear();
+                marker = mMap.addMarker(new MarkerOptions().position(latLng));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
             }
         });
     }
@@ -173,7 +176,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_saved_spot:
-                Toast.makeText(this, "Saved Spot selected", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Saved Spot selected", Toast.LENGTH_SHORT).show();
+                Parking latestParking = DB.getLatestParking();
+                if (latestParking != null){
+                    marker = mMap.addMarker(new MarkerOptions()
+                            .position(latestParking.getLocation())
+                            .title(latestParking.getFinalCost() + "€")
+                            .snippet("Duration: " + latestParking.getDuration() + " minutes"));
+                } else {
+                    marker.setPosition(DEFAULT_LOCATION);
+                }
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
+
                 return true;
             case R.id.action_settings:
                 Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT).show();
@@ -203,7 +217,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         } else {
                             Toast.makeText(getApplicationContext(), "Current location is null. Using defaults.", Toast.LENGTH_SHORT);
                             Log.d("LOCATION", "Current location is null. Using defaults.");
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAAULT_LOCATION, DEFAULT_ZOOM));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
