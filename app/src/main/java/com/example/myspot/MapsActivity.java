@@ -68,20 +68,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         DB.createAndOrLoadDB(getBaseContext());
 
-        //test
-        DB.addParking(new Parking(
-                this.DEFAAULT_LOCATION,
-                -1,
-                -1,
-                Calendar.getInstance(),
-                -1,
-                false,
-                true
-        ));
-
         Toolbar mapToolbar = findViewById(R.id.mapToolbar);
         setSupportActionBar(mapToolbar);
-
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -133,8 +121,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(MapsActivity.this, AlarmActivity.class)
-                        .putExtra("location", new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()));
+                intent = new Intent(MapsActivity.this, AlarmActivity.class);
+                intent.putExtra("latitude", mLastKnownLocation.getLatitude())
+                        .putExtra("longitude",mLastKnownLocation.getLongitude());
 
                 startActivity(intent);
             }
@@ -143,8 +132,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(MapsActivity.this, AlarmActivity.class)
-                        .putExtra("location", marker.getPosition());
+                intent = new Intent(MapsActivity.this, AlarmActivity.class);
+                intent.putExtra("latitude", marker.getPosition().latitude)
+                        .putExtra("longitude",marker.getPosition().longitude);
 
                 startActivity(intent);
             }

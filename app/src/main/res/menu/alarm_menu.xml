@@ -5,4 +5,8 @@
         android:id="@+id/action_settings"
         android:title="@string/settings"
         app:showAsAction="never" />
+    <item
+    android:id="@+id/action_save"
+    android:title="@string/save"
+    app:showAsAction="ifRoom" />
 </menu>

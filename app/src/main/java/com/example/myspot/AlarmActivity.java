@@ -1,5 +1,6 @@
 package com.example.myspot;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -13,12 +14,15 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
@@ -41,6 +45,7 @@ public class AlarmActivity extends AppCompatActivity {
     private  float cost_per_hour ;
     private  float initial_cost ;
     private  boolean alarmOn = false;
+    private LatLng location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,13 @@ public class AlarmActivity extends AppCompatActivity {
 
         // initialize switch
         sb = findViewById(R.id.switchAlarm);
+
+        Intent intent = getIntent();
+
+        location = new LatLng(
+                intent.getDoubleExtra("latitude",0),
+                intent.getDoubleExtra("longitude",0)
+        );
 
         // restore vars from savedInstance id exists
         if(savedInstanceState != null){
@@ -237,8 +249,23 @@ public class AlarmActivity extends AppCompatActivity {
         return final_cost;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_save:
+                DB.addParking(new Parking(
+                        location,
+                        initial_cost,
+                        calc_final_cost(),
+                        Calendar.getInstance(),
+                        hour * 60 + minute,
+                        alarmOn,
+                        true
+                ));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
-
-
-
+    }
 }
