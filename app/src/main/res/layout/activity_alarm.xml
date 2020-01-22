@@ -13,20 +13,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
         android:text="Final cost: 0 €"
         android:textColor="#7191DB"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editTextInitialCost"
-        app:layout_constraintTop_toBottomOf="@+id/switchAlarm" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCostPerHour" />
+
+    <TextView
+        android:id="@+id/alarmView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Alarm:"
+        android:textColor="#7191DB"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/finalCostView" />
 
     <include
         android:id="@+id/alarmToolbar"
+        layout="@layout/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        layout="@layout/toolbar"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/costPerHourView"
@@ -35,61 +45,25 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
         android:text="Cost per hour:"
         android:textColor="#7191DB"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextCostPerHour"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextInitialCost" />
-
-    <TimePicker
-        android:id="@+id/alarmTimePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="372dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintHorizontal_bias="0.518"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmToolbar" />
-
-    <Switch
-        android:id="@+id/switchAlarm"
-        android:layout_width="119dp"
-        android:layout_height="63dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="316dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/AlarmOff"
-        android:textColor="#7191DB"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.945"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.272" />
 
     <TextView
         android:id="@+id/initialCostView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="24dp"
         android:text="Initial cost:"
         android:textColor="#7191DB"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/editTextInitialCost"
-        app:layout_constraintEnd_toStartOf="@+id/switchAlarm"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmTimePicker"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintTop_toBottomOf="@+id/alarmToolbar" />
 
     <EditText
         android:id="@+id/editTextInitialCost"
@@ -97,14 +71,9 @@
         android:layout_height="41dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="16dp"
         android:ems="10"
         android:inputType="number|numberDecimal"
         android:textColor="#7191DB"
-        app:layout_constraintBottom_toTopOf="@+id/costPerHourView"
-        app:layout_constraintEnd_toStartOf="@+id/switchAlarm"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/initialCostView" />
 
@@ -115,15 +84,25 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
         android:ems="10"
         android:inputType="number|numberDecimal"
         android:textColor="#7191DB"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/costPerHourView" />
+
+    <EditText
+        android:id="@+id/editTextAlarm"
+        android:layout_width="129dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="time"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/alarmView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
