@@ -78,13 +78,14 @@ public class AlarmActivity extends AppCompatActivity {
         // initialize alarmTime edit text
         alarmTime = findViewById(R.id.editTextAlarm);
 
+        //displays a time picker when time edit text is clicked
         alarmTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alarm_timePickerDialog = new TimePickerDialog(AlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
-                        alarmTime.setText(hourOfDay + ":" + minuteOfHour);
+                        alarmTime.setText(String.format("%02d:%02d", hourOfDay, minuteOfHour));
                         hour = hourOfDay;
                         minute = minuteOfHour;
                     }
@@ -301,17 +302,6 @@ public class AlarmActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_save:
-                //save to database
-                DB.addParking(new Parking(
-                    location,
-                    initial_cost,
-                    calc_final_cost(),
-                    Calendar.getInstance(),
-                    duration,
-                    alarmOn,
-                    true
-                ));
-
                 //add alarm
                 if(!alarmOn){
                     alarmOn = true;
@@ -354,6 +344,17 @@ public class AlarmActivity extends AppCompatActivity {
 //                    Toast.makeText(context,"Alarm is off.", Toast.LENGTH_SHORT).show();
 //                    Log.e("ALARM", " ia m here");
 //                }
+
+                //save to database
+                DB.addParking(new Parking(
+                        location,
+                        initial_cost,
+                        calc_final_cost(),
+                        Calendar.getInstance(),
+                        duration,
+                        alarmOn,
+                        true
+                ));
 
                 startActivity(new Intent(this, MapsActivity.class));
                 return true;

@@ -34,6 +34,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DecimalFormat;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -52,6 +54,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Animation fabOpen, fabClose, fabCW, fabCounterCW;
     private TextView markerLabel, locationLabel;
     private boolean isMenuOpen = false;
+
+    //format to display only two digits
+    DecimalFormat df = new DecimalFormat();
 
     private Intent intent;
 
@@ -134,6 +139,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //format to display only two decimal places for price in marker title
+        df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(2);
     }
 
     @Override
@@ -152,7 +160,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (latestParking != null){
             marker = mMap.addMarker(new MarkerOptions()
                     .position(latestParking.getLocation())
-                    .title(latestParking.getFinalCost() + "€")
+                    .title(df.format(latestParking.getFinalCost()) + "€")
                     .snippet("Duration: " + latestParking.getDuration() + " minutes"));
         } else {
             marker = mMap.addMarker(new MarkerOptions()
@@ -184,9 +192,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                Toast.makeText(this, "Saved Spot selected", Toast.LENGTH_SHORT).show();
                 Parking latestParking = DB.getLatestParking();
                 if (latestParking != null){
+
                     marker = mMap.addMarker(new MarkerOptions()
                             .position(latestParking.getLocation())
-                            .title(latestParking.getFinalCost() + "€")
+                            .title(df.format(latestParking.getFinalCost()) + "€")
                             .snippet("Duration: " + latestParking.getDuration() + " minutes"));
                 } else {
                     marker = mMap.addMarker(new MarkerOptions()
