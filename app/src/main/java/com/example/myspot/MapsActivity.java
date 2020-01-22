@@ -40,7 +40,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     private final LatLng DEFAULT_LOCATION = new LatLng(40.6250129,22.9601085);
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 18;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
 
@@ -192,7 +192,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     marker = mMap.addMarker(new MarkerOptions()
                             .position(DEFAULT_LOCATION));
                 }
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
 
                 return true;
             case R.id.action_settings:
