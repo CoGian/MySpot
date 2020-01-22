@@ -104,33 +104,35 @@ public abstract class DB {
                 "totalCost, " +     //3
                 "time, " +          //4
                 "duration, " +      //5
-                "alarm, " +          //6
+                "alarm, " +         //6
                 "active " +         //7
                 "FROM parking " +
                 "ORDER BY time DESC;",null);
 
         //reads only the first row of the query
-        cursor.moveToNext();
+        if (cursor.getCount() > 0){
+            cursor.moveToNext();
 
-        //parse time string from database to Calendar object
-        Calendar calendar = new GregorianCalendar();
+            //parse time string from database to Calendar object
+            Calendar calendar = new GregorianCalendar();
 
-        try {
-            calendar.setTime(simpleDateFormat.parse(cursor.getString(4)));
-        } catch (ParseException e) {
-            return null;
-        }
+            try {
+                calendar.setTime(simpleDateFormat.parse(cursor.getString(4)));
+            } catch (ParseException e) {
+                return null;
+            }
 
-        //returns a Parking object
-        return new Parking(
-            new LatLng(cursor.getDouble(0),cursor.getDouble(1)),//location: columns latitude, longitude
-            cursor.getDouble(2),//initialCost: column initialCost
-            cursor.getDouble(3),//totalCost: column finalCost
-            calendar,//time: column time parsed to Calendar object
-            cursor.getInt(5),//duration: column duration
-            cursor.getInt(6) == 1,
-            cursor.getInt(7) == 1
-        );
+            //returns a Parking object
+            return new Parking(
+                    new LatLng(cursor.getDouble(0),cursor.getDouble(1)),//location: columns latitude, longitude
+                    cursor.getDouble(2),//initialCost: column initialCost
+                    cursor.getDouble(3),//totalCost: column finalCost
+                    calendar,//time: column time parsed to Calendar object
+                    cursor.getInt(5),//duration: column duration
+                    cursor.getInt(6) == 1,
+                    cursor.getInt(7) == 1
+            );
+        } else return null;
     }
 
     public static String getDbName() {

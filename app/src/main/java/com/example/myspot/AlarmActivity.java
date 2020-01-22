@@ -258,14 +258,14 @@ public class AlarmActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_save:
                 DB.addParking(new Parking(
-                        location,
-                        initial_cost,
-                        calc_final_cost(),
-                        Calendar.getInstance(),
-                        duration,
-                        alarmOn,
-                        true
-                ));
+                    location,
+                    initial_cost,
+                    calc_final_cost(),
+                    Calendar.getInstance(),
+                    duration,
+                    alarmOn,
+                    true
+            ));
                 startActivity(new Intent(this, MapsActivity.class));
                 return true;
             default:

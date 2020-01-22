@@ -149,10 +149,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Parking latestParking = DB.getLatestParking();
 
         // Add a marker for the most recent parking
-        marker = mMap.addMarker(new MarkerOptions()
-                .position(latestParking.getLocation())
-                .title(latestParking.getFinalCost() + "€")
-                .snippet("Duration: " + latestParking.getDuration() + " minutes"));
+        if (latestParking != null){
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(latestParking.getLocation())
+                    .title(latestParking.getFinalCost() + "€")
+                    .snippet("Duration: " + latestParking.getDuration() + " minutes"));
+        } else {
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(DEFAULT_LOCATION));
+        }
 
         //move marker on long click
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
@@ -184,7 +189,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .title(latestParking.getFinalCost() + "€")
                             .snippet("Duration: " + latestParking.getDuration() + " minutes"));
                 } else {
-                    marker.setPosition(DEFAULT_LOCATION);
+                    marker = mMap.addMarker(new MarkerOptions()
+                            .position(DEFAULT_LOCATION));
                 }
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
 
