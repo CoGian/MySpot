@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 import static java.lang.Math.floor;
@@ -47,6 +49,8 @@ public class AlarmActivity extends AppCompatActivity {
     private  int duration ;
     private  boolean alarmOn = false;
     private LatLng location;
+    private DecimalFormat df = new DecimalFormat("#.##");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,9 @@ public class AlarmActivity extends AppCompatActivity {
         initialCostText = findViewById(R.id.editTextInitialCost);
         costPerHourText = findViewById(R.id.editTextCostPerHour);
         finalCostView = findViewById(R.id.finalCostView);
+
+        df.setRoundingMode(RoundingMode.CEILING);
+
 
         this.context = this ;
         // initialize alarm manager
@@ -94,7 +101,7 @@ public class AlarmActivity extends AppCompatActivity {
 
             // calculate final cost
             double final_cost = calc_final_cost();
-            finalCostView.setText("Final cost: "+final_cost+" €");
+            finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
             if (alarmOn)
                 sb.setText("Alarm On");
             else
@@ -164,7 +171,7 @@ public class AlarmActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // calculate final cost
                 double final_cost = calc_final_cost();
-                finalCostView.setText("Final cost: "+final_cost+" €");
+                finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
             }
 
             @Override
@@ -183,7 +190,7 @@ public class AlarmActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // calculate final cost
                 double final_cost = calc_final_cost();
-                finalCostView.setText("Final cost: "+final_cost+" €");
+                finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
             }
 
             @Override
@@ -197,7 +204,7 @@ public class AlarmActivity extends AppCompatActivity {
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 // calculate final cost
                 double final_cost = calc_final_cost();
-                finalCostView.setText("Final cost: "+final_cost+" €");
+                finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
             }
         });
     }

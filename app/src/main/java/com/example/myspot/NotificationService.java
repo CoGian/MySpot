@@ -18,10 +18,15 @@ import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class NotificationService extends JobIntentService {
     public static final int JOB_ID = 1;
+
+    private DecimalFormat df = new DecimalFormat("#.##");
+
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, NotificationService.class, JOB_ID, work);
@@ -30,6 +35,7 @@ public class NotificationService extends JobIntentService {
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
 
+        df.setRoundingMode(RoundingMode.CEILING);
         // fetch extra
         double final_cost = intent.getExtras().getDouble("final_cost");
 
@@ -77,7 +83,7 @@ public class NotificationService extends JobIntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"3000")
                 .setSmallIcon(R.drawable.ic_icon_notification)
                 .setContentTitle("MySpot")
-                .setContentText("You should unpark.Your final cost is: " + final_cost + " €")
+                .setContentText("You should unpark.Your final cost is: " + df.format(final_cost) + " €")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pending_maps_Intent)
                 .setAutoCancel(true)
