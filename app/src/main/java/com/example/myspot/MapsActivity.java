@@ -44,10 +44,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.protobuf.DoubleValue;
+import com.google.protobuf.StringValue;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,9 +87,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         DB.createAndOrLoadDB(getBaseContext());
 
-
-
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
         printKeyHash();
         Intent notif_intent = getIntent();
 
@@ -94,10 +95,62 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if(notif_intent.getExtras().getBoolean("Alarm",false)){
 
-                //Init FB share
+                // get values from latest parking
                 Parking latestParking = DB.getLatestParking();
                 double lat = latestParking.getLocation().latitude;
                 double lng = latestParking.getLocation().longitude ;
+                Calendar time = latestParking.getTime();
+                String day = String.valueOf(time.get(Calendar.DAY_OF_MONTH));
+                String month = String.valueOf(time.get(Calendar.MONTH)+1);
+
+                int hour = time.get(Calendar.HOUR_OF_DAY);
+                String strHour  ;
+                if (hour < 10)
+                    strHour = "0" +hour;
+                else
+                    strHour = String.valueOf(hour);
+
+                int minute = time.get(Calendar.MINUTE);
+                String strMinute  ;
+                if (minute < 10)
+                    strMinute = "0" + minute;
+                else
+                    strMinute = String.valueOf(minute);
+
+                String strTime = day + "/" + month + "  " + strHour + ":" + strMinute;
+
+                // upload to firebase
+                Spot spot = new Spot();
+                spot.setLatitude(lat);
+                spot.setLongitude(lng);
+                spot.setTime(strTime);
+                spot.setAddress(getAddres(lat,lng));
+                new FirebaseDatabaseHelper().addSpot(spot, new FirebaseDatabaseHelper.DataStatus() {
+                    @Override
+                    public void DataIsLoaded(List<Spot> spots, List<String> keys) {
+
+                    }
+
+                    @Override
+                    public void DataIsInserted() {
+                        Toast.makeText(MapsActivity.this,"The spot is free"
+                        ,Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void DataIsUpdated() {
+
+                    }
+
+                    @Override
+                    public void DataIsDeleted() {
+
+                    }
+                });
+
+
+                //Init FB share
+                FacebookSdk.sdkInitialize(this.getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
                 shareDialog = new ShareDialog(this);
 

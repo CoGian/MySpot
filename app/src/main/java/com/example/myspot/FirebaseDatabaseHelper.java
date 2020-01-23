@@ -2,6 +2,7 @@ package com.example.myspot;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +52,17 @@ public class FirebaseDatabaseHelper {
 
             }
         });
+    }
+
+    public void  addSpot(Spot spot, final  DataStatus dataStatus){
+        String key = mReferenceSpots.push().getKey();
+        mReferenceSpots.child(key).setValue(spot)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        dataStatus.DataIsInserted();
+                    }
+                });
     }
 
 
