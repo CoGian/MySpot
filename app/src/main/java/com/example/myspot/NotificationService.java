@@ -45,10 +45,12 @@ public class NotificationService extends JobIntentService {
 
         // set up an intent that goes to maps activity
         Intent maps_intent = new Intent(this.getApplicationContext(),MapsActivity.class);
-        maps_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        maps_intent.putExtra("Alarm",true);
+        maps_intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // set up pending intent
         PendingIntent pending_maps_Intent = PendingIntent.getActivity(this,0,maps_intent
-                ,0) ;
+                ,PendingIntent.FLAG_UPDATE_CURRENT) ;
 
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         AudioAttributes att = new AudioAttributes.Builder()

@@ -1,9 +1,15 @@
 package com.example.myspot;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +26,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -33,14 +43,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.protobuf.DoubleValue;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-
     private final LatLng DEFAULT_LOCATION = new LatLng(40.6250129,22.9601085);
     private static final int DEFAULT_ZOOM = 18;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -55,6 +69,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView markerLabel, locationLabel;
     private boolean isMenuOpen = false;
 
+    private CallbackManager callbackManager;
+    private ShareDialog shareDialog;
     //format to display only two digits
     DecimalFormat df = new DecimalFormat();
 
@@ -66,6 +82,56 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         DB.createAndOrLoadDB(getBaseContext());
+
+        //Get address base on location
+        try{
+            Geocoder geo = new Geocoder(MapsActivity.this.getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = geo.getFromLocation(40.6250129, 22.9601085, 1);
+            if (addresses.isEmpty()) {
+
+            }
+            else {
+                if (addresses.size() > 0) {
+                    Log.d("adress" ,addresses.get(0).getFeatureName() + ","
+                            + addresses.get(0).getThoroughfare() + ","
+                                    + addresses.get(0).getLocality());
+
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        printKeyHash();
+        Intent notif_intent = getIntent();
+
+        // check if you are coming from notification
+        if(notif_intent.getExtras()!=null){
+
+            if(notif_intent.getExtras().getBoolean("Alarm",false)){
+
+                //Init FB share
+                Parking latestParking = DB.getLatestParking();
+                double lat = latestParking.getLocation().latitude;
+                double lng = latestParking.getLocation().longitude ;
+                callbackManager = CallbackManager.Factory.create();
+                shareDialog = new ShareDialog(this);
+
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setQuote("Parking spot at:")
+                        .setContentUrl(Uri.parse("https://maps.google.com/?q="+lat+","+lng))
+                        .build();
+
+                if(ShareDialog.canShow(ShareLinkContent.class)){
+                    shareDialog.show(linkContent);
+
+                }
+            }
+
+        }
+
 
         Toolbar mapToolbar = findViewById(R.id.mapToolbar);
         setSupportActionBar(mapToolbar);
@@ -120,6 +186,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 intent = new Intent(MapsActivity.this, AlarmActivity.class);
                 intent.putExtra("latitude", mLastKnownLocation.getLatitude())
                         .putExtra("longitude",mLastKnownLocation.getLongitude());
@@ -142,6 +209,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //format to display only two decimal places for price in marker title
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(2);
+    }
+
+    private void printKeyHash() {
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.example.myspot",
+                    PackageManager.GET_SIGNATURES);
+
+            for(Signature signature : info.signatures){
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("kostas",""+ Base64.encodeToString(md.digest(),Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -204,6 +290,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),DEFAULT_ZOOM));
 
                 return true;
+            case R.id.action_available_spots:
+                Intent s_intent = new Intent(MapsActivity.this, FreeSpotsActivity.class);
+
+                startActivity(s_intent);
+
             default:
                 return super.onOptionsItemSelected(item);
         }

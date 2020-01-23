@@ -6,8 +6,9 @@
         android:icon="@drawable/ic_stat_name"
         android:title="@string/saved_spot"
         app:showAsAction="ifRoom" />
-<!--    <item-->
-<!--        android:id="@+id/action_settings"-->
-<!--        android:title="@string/settings"-->
-<!--        app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/action_available_spots"
+        android:title="Available Spots"
+        app:showAsAction="never" />
 </menu>
