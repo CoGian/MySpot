@@ -269,6 +269,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //hides ui buttons from the map
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
 
