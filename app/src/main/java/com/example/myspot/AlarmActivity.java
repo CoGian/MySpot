@@ -40,10 +40,10 @@ public class AlarmActivity extends AppCompatActivity {
     private PendingIntent pendingIntent;
     private Calendar calendar;
     private Intent rec_intent;
-//    private Switch sb ;
+    private Switch alarmSwitch ;
     private EditText initialCostText ;
     private EditText costPerHourText;
-    private EditText alarmTime;
+    private TextView alarmTime;
     private TextView finalCostView ;
     private  int hour ;
     private  int minute ;
@@ -75,21 +75,39 @@ public class AlarmActivity extends AppCompatActivity {
         // initialize alarm manager
         alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
-        // initialize alarmTime edit text
-        alarmTime = findViewById(R.id.editTextAlarm);
+        // initialize alarmTime textView
+        alarmTime = findViewById(R.id.editViewAlarm);
+        alarmTime.setVisibility(View.INVISIBLE);
+
+        alarmSwitch = findViewById(R.id.alarmSwitch);
+
+        alarmSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    alarmTime.setVisibility(View.VISIBLE);
+                    alarmOn = true;
+                    alarm_timePickerDialog.show();
+                } else {
+                    alarmTime.setVisibility(View.INVISIBLE);
+                    alarmOn = false;
+                }
+            }
+        });
+
+        alarm_timePickerDialog = new TimePickerDialog(AlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
+                alarmTime.setText(String.format("%02d:%02d", hourOfDay, minuteOfHour));
+                hour = hourOfDay;
+                minute = minuteOfHour;
+            }
+        }, 0,0,true);
 
         //displays a time picker when time edit text is clicked
         alarmTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alarm_timePickerDialog = new TimePickerDialog(AlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
-                        alarmTime.setText(String.format("%02d:%02d", hourOfDay, minuteOfHour));
-                        hour = hourOfDay;
-                        minute = minuteOfHour;
-                    }
-                }, 0,0,true);
                 alarm_timePickerDialog.show();
             }
         });
@@ -303,8 +321,7 @@ public class AlarmActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.action_save:
                 //add alarm
-                if(!alarmOn){
-                    alarmOn = true;
+                if(alarmOn){
 
                     // calculate final cost
                     double final_cost = calc_final_cost();
