@@ -83,25 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         DB.createAndOrLoadDB(getBaseContext());
 
-        //Get address base on location
-        try{
-            Geocoder geo = new Geocoder(MapsActivity.this.getApplicationContext(), Locale.getDefault());
-            List<Address> addresses = geo.getFromLocation(40.6250129, 22.9601085, 1);
-            if (addresses.isEmpty()) {
 
-            }
-            else {
-                if (addresses.size() > 0) {
-                    Log.d("adress" ,addresses.get(0).getFeatureName() + ","
-                            + addresses.get(0).getThoroughfare() + ","
-                                    + addresses.get(0).getLocality());
-
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
 
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         printKeyHash();
@@ -388,5 +370,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         updateLocationUI();
+    }
+
+    public String getAddres(Double latitude ,Double longitude) {
+        //Get address base on location
+        try{
+            Geocoder geo = new Geocoder(MapsActivity.this.getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = geo.getFromLocation(latitude, longitude, 1);
+            if (addresses.isEmpty()) {
+
+            }
+            else {
+                if (addresses.size() > 0) {
+                    return addresses.get(0).getFeatureName() + ","
+                            + addresses.get(0).getThoroughfare() + ","
+                            + addresses.get(0).getLocality() ;
+
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  "" ;
     }
 }

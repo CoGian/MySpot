@@ -30,7 +30,7 @@ public class FirebaseDatabaseHelper {
 
     }
 
-    public  void readBooks(final DataStatus dataStatus){
+    public  void readSpots(final DataStatus dataStatus){
         mReferenceSpots.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -52,4 +52,6 @@ public class FirebaseDatabaseHelper {
             }
         });
     }
+
+
 }
