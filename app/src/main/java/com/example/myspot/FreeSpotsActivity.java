@@ -21,8 +21,7 @@ public class FreeSpotsActivity extends AppCompatActivity {
         setSupportActionBar(freeSpotsToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview_spots);
-
+        recyclerView = findViewById(R.id.recyclerview_spots);
 
         recyclerView.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));

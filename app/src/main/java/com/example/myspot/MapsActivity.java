@@ -32,7 +32,6 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -43,14 +42,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.protobuf.DoubleValue;
-import com.google.protobuf.StringValue;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -75,6 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private CallbackManager callbackManager;
     private ShareDialog shareDialog;
+
     //format to display only two digits
     DecimalFormat df = new DecimalFormat();
 
@@ -84,6 +80,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Toolbar mapToolbar = findViewById(R.id.mapToolbar);
+        setSupportActionBar(mapToolbar);
 
         DB.createAndOrLoadDB(getBaseContext());
 
@@ -148,7 +147,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-
                 //Init FB share
                 FacebookSdk.sdkInitialize(this.getApplicationContext());
                 callbackManager = CallbackManager.Factory.create();
@@ -161,15 +159,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if(ShareDialog.canShow(ShareLinkContent.class)){
                     shareDialog.show(linkContent);
-
                 }
             }
-
         }
-
-
-        Toolbar mapToolbar = findViewById(R.id.mapToolbar);
-        setSupportActionBar(mapToolbar);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -194,7 +186,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Open menu and get get location
                 if(isMenuOpen){
                     locationLabel.setVisibility(View.INVISIBLE);
@@ -221,7 +212,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 intent = new Intent(MapsActivity.this, AlarmActivity.class);
                 intent.putExtra("latitude", mLastKnownLocation.getLatitude())
                         .putExtra("longitude",mLastKnownLocation.getLongitude());
@@ -262,7 +252,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -313,7 +302,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_saved_spot:
-//                Toast.makeText(this, "Saved Spot selected", Toast.LENGTH_SHORT).show();
                 Parking latestParking = DB.getLatestParking();
                 if (latestParking != null){
 

@@ -115,9 +115,6 @@ public class AlarmActivity extends AppCompatActivity {
         // create an intent to the Alarm Receiver
         rec_intent = new Intent(this.context,Alarm_Receiver.class);
 
-        // initialize switch
-//        sb = findViewById(R.id.switchAlarm);
-
         Intent intent = getIntent();
 
         location = new LatLng(
@@ -139,63 +136,7 @@ public class AlarmActivity extends AppCompatActivity {
             // calculate final cost
             double final_cost = calc_final_cost();
             finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
-//            if (alarmOn)
-//                sb.setText("Alarm On");
-//            else
-//                sb.setText("Alarm Off");
-
-
         }
-
-        // create on checked change listener
-//        sb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if(isChecked && !alarmOn){
-//                    sb.setText("Alarm On");
-//                    alarmOn = true;
-//
-//                    // calculate final cost
-//                    double final_cost = calc_final_cost();
-//
-//                    // get the string values of hour and minute
-//                    hour = alarm_timePicker.getHour();
-//                    minute= alarm_timePicker.getMinute();
-//
-//
-//                    rec_intent.putExtra("final_cost",final_cost);
-//
-//                    // convert the int values to string
-//                    String hour_str = String.valueOf(hour);
-//                    String min_str = String.valueOf(minute);
-//                    if(minute<10)
-//                        min_str = "0" + String.valueOf(minute);
-//                    Log.e("ALARM", "Alarm set on: " + hour_str + ":" + min_str + "   on " + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))+ " with cost: " + final_cost);
-//
-//                    //create a pending intent that delays the intent
-//                    // until the specified calendar time
-//                    pendingIntent = PendingIntent.getBroadcast(AlarmActivity.this,0,rec_intent
-//                    ,PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                    //set the alarm manager
-//                    alarmManager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()
-//                    ,pendingIntent);
-//
-//                    Toast.makeText(context,"Alarm is on.", Toast.LENGTH_SHORT).show();
-//                }else if(!isChecked && alarmOn){
-//
-//                    pendingIntent = PendingIntent.getBroadcast(AlarmActivity.this,0,rec_intent
-//                            ,PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                    sb.setText("Alarm Off");
-//                    alarmOn = false;
-//                    alarmManager.cancel(pendingIntent);
-//                    Toast.makeText(context,"Alarm is off.", Toast.LENGTH_SHORT).show();
-//                    Log.e("ALARM", " ia m here");
-//                }
-//
-//            }
-//        });
 
         // create on text changed listener
         initialCostText.addTextChangedListener(new TextWatcher() {
@@ -254,15 +195,6 @@ public class AlarmActivity extends AppCompatActivity {
 
             }
         });
-
-//        alarm_timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-//            @Override
-//            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-//                // calculate final cost
-//                double final_cost = calc_final_cost();
-//                finalCostView.setText("Final cost: "+df.format(final_cost)+" €");
-//            }
-//        });
     }
 
     @Override
@@ -279,8 +211,6 @@ public class AlarmActivity extends AppCompatActivity {
         outState.putFloat("cost_per_hour",cost_per_hour);
         outState.putFloat("initial_cost",initial_cost);
         outState.putBoolean("alarmOn",alarmOn);
-
-
     }
 
     public double calc_final_cost(){
@@ -298,11 +228,13 @@ public class AlarmActivity extends AppCompatActivity {
         // create instances of calendars
         calendar = Calendar.getInstance();
         Calendar curr_cal = Calendar.getInstance();
+
         // setting calendar instance with the hour and minutes that picked
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
         Log.e("ALARM","" + calendar.getTimeInMillis()+ "     " + curr_cal.getTimeInMillis());
+
         // check if user has put time from tomorrow and increase calendars' day by one
         if (curr_cal.getTimeInMillis()>calendar.getTimeInMillis())
             calendar.add(Calendar.DAY_OF_YEAR,1);
@@ -322,14 +254,8 @@ public class AlarmActivity extends AppCompatActivity {
             case R.id.action_save:
                 //add alarm
                 if(alarmOn){
-
                     // calculate final cost
                     double final_cost = calc_final_cost();
-
-                    // get the string values of hour and minute
-//                    hour = alarm_timePicker.getHour();
-//                    minute= alarm_timePicker.getMinute();
-
 
                     rec_intent.putExtra("final_cost",final_cost);
 
@@ -337,11 +263,10 @@ public class AlarmActivity extends AppCompatActivity {
                     String hour_str = String.valueOf(hour);
                     String min_str = String.valueOf(minute);
                     if(minute<10)
-                        min_str = "0" + String.valueOf(minute);
-                    Log.e("ALARM", "Alarm set on: " + hour_str + ":" + min_str + "   on " + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))+ " with cost: " + final_cost);
+                        min_str = "0" + minute;
+                    Log.e("ALARM", "Alarm set on: " + hour_str + ":" + min_str + "   on " + calendar.get(Calendar.DAY_OF_MONTH)+ " with cost: " + final_cost);
 
-                    //create a pending intent that delays the intent
-                    // until the specified calendar time
+                    //create a pending intent that delays the intent until the specified calendar time
                     pendingIntent = PendingIntent.getBroadcast(AlarmActivity.this,0,rec_intent
                             ,PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -351,16 +276,6 @@ public class AlarmActivity extends AppCompatActivity {
 
                     Toast.makeText(context,"Alarm is on.", Toast.LENGTH_SHORT).show();
                 }
-//                else if(alarmOn){
-//
-//                    pendingIntent = PendingIntent.getBroadcast(AlarmActivity.this,0,rec_intent
-//                            ,PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                    alarmOn = false;
-//                    alarmManager.cancel(pendingIntent);
-//                    Toast.makeText(context,"Alarm is off.", Toast.LENGTH_SHORT).show();
-//                    Log.e("ALARM", " ia m here");
-//                }
 
                 //save to database
                 DB.addParking(new Parking(
@@ -378,6 +293,5 @@ public class AlarmActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }
