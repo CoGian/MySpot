@@ -99,7 +99,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Parking latestParking = DB.getLatestParking();
                 double lat = latestParking.getLocation().latitude;
                 double lng = latestParking.getLocation().longitude ;
-                Calendar time = latestParking.getTime();
+                Calendar time = Calendar.getInstance();
                 String day = String.valueOf(time.get(Calendar.DAY_OF_MONTH));
                 String month = String.valueOf(time.get(Calendar.MONTH)+1);
 

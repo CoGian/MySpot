@@ -10,6 +10,7 @@
         android:id="@+id/recyclerview_spots"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contextClickable="false"
         android:scrollbars="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
