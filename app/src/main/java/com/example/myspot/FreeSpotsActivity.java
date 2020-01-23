@@ -1,6 +1,7 @@
 package com.example.myspot;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,10 @@ public class FreeSpotsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_free_spots);
+
+        Toolbar freeSpotsToolbar = findViewById(R.id.freeSpotsToolbar);
+        setSupportActionBar(freeSpotsToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerview_spots);
 
