@@ -9,4 +9,9 @@
     <string name="saved_spot">Saved spot</string>
     <string name="settings">Settings</string>
     <string name="save">Save</string>
+    <string name="finalCost">Final cost: 0 €</string>
+    <string name="alarmLabel">Alarm:</string>
+    <string name="costPerHourLabel">Cost per hour:</string>
+    <string name="initialCostLabel">Initial cost:</string>
+    <string name="emptyTime">--:--</string>
 </resources>
