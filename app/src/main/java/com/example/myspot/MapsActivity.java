@@ -119,7 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 String strTime = day + "/" + month + "  " + strHour + ":" + strMinute;
 
-                // upload to firebase
+                // upload to firebase db
                 Spot spot = new Spot();
                 spot.setLatitude(lat);
                 spot.setLongitude(lng);
@@ -162,7 +162,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     shareDialog.show(linkContent);
                 }
             }
-            // check if it is coming from free spots list
+            // check if it is coming from free spots list activity
             else if (incoming_intent.hasExtra("latitude")){
                 Log.d("incoming","good");
             }

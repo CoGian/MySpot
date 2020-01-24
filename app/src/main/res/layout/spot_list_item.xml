@@ -5,7 +5,8 @@
     android:id="@+id/linearLayout"
     style="@style/Base.TextAppearance.AppCompat.Large.Inverse"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#BA000000">
 
     <TextView
         android:id="@+id/address_txtView"
@@ -14,6 +15,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="5dp"
         android:text="TextView"
+        android:textColor="#7191DB"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,6 +28,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="8dp"
         android:text="TextView"
+        android:textColor="#7191DB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/address_txtView" />
