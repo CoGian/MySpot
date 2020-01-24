@@ -3,15 +3,19 @@ package com.example.myspot;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.List;
 
-public class FreeSpotsActivity extends AppCompatActivity {
+public class FreeSpotsActivity extends AppCompatActivity implements SpotsAdapter.OnSpotListener {
 
     private RecyclerView recyclerView ;
+    private List<Spot> mSpots ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +33,10 @@ public class FreeSpotsActivity extends AppCompatActivity {
         new FirebaseDatabaseHelper().readSpots(new FirebaseDatabaseHelper.DataStatus() {
             @Override
             public void DataIsLoaded(List<Spot> spots, List<String> keys) {
-                new RecyclerView_Config().setConfig(recyclerView,FreeSpotsActivity.this,
-                        spots,keys);
+                mSpots = spots;
+                SpotsAdapter mSpotsAdapter = new SpotsAdapter(spots, keys,FreeSpotsActivity.this,FreeSpotsActivity.this);
+                recyclerView.setLayoutManager(new LinearLayoutManager(FreeSpotsActivity.this));
+                recyclerView.setAdapter(mSpotsAdapter);
             }
 
             @Override
@@ -49,5 +55,18 @@ public class FreeSpotsActivity extends AppCompatActivity {
             }
         });
 
+
+
+    }
+
+
+    @Override
+    public void onSpotClick(int position) {
+        Intent intent = new Intent(this,MapsActivity.class);
+        Log.d("Hi", mSpots.get(position).getAddress()) ;
+
+        intent.putExtra("latitude",mSpots.get(position).getLatitude());
+        intent.putExtra("longitude",mSpots.get(position).getLongitude());
+        startActivity(intent);
     }
 }

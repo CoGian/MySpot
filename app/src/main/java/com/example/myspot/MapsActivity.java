@@ -87,12 +87,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         DB.createAndOrLoadDB(getBaseContext());
 
         printKeyHash();
-        Intent notif_intent = getIntent();
+        Intent incoming_intent = getIntent();
 
-        // check if you are coming from notification
-        if(notif_intent.getExtras()!=null){
 
-            if(notif_intent.getExtras().getBoolean("Alarm",false)){
+        if(incoming_intent.getExtras()!=null){
+
+            // check if it is coming from notification
+            if(incoming_intent.hasExtra("Alarm")){
 
                 // get values from latest parking
                 Parking latestParking = DB.getLatestParking();
@@ -160,6 +161,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if(ShareDialog.canShow(ShareLinkContent.class)){
                     shareDialog.show(linkContent);
                 }
+            }
+            // check if it is coming from free spots list
+            else if (incoming_intent.hasExtra("latitude")){
+                Log.d("incoming","good");
             }
         }
 
