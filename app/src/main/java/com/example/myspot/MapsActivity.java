@@ -87,86 +87,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         DB.createAndOrLoadDB(getBaseContext());
 
         printKeyHash();
-        Intent incoming_intent = getIntent();
-
-
-        if(incoming_intent.getExtras()!=null){
-
-            // check if it is coming from notification
-            if(incoming_intent.hasExtra("Alarm")){
-
-                // get values from latest parking
-                Parking latestParking = DB.getLatestParking();
-                double lat = latestParking.getLocation().latitude;
-                double lng = latestParking.getLocation().longitude ;
-                Calendar time = Calendar.getInstance();
-                String day = String.valueOf(time.get(Calendar.DAY_OF_MONTH));
-                String month = String.valueOf(time.get(Calendar.MONTH)+1);
-
-                int hour = time.get(Calendar.HOUR_OF_DAY);
-                String strHour  ;
-                if (hour < 10)
-                    strHour = "0" +hour;
-                else
-                    strHour = String.valueOf(hour);
-
-                int minute = time.get(Calendar.MINUTE);
-                String strMinute  ;
-                if (minute < 10)
-                    strMinute = "0" + minute;
-                else
-                    strMinute = String.valueOf(minute);
-
-                String strTime = day + "/" + month + "  " + strHour + ":" + strMinute;
-
-                // upload to firebase db
-                Spot spot = new Spot();
-                spot.setLatitude(lat);
-                spot.setLongitude(lng);
-                spot.setTime(strTime);
-                spot.setAddress(getAddres(lat,lng));
-                new FirebaseDatabaseHelper().addSpot(spot, new FirebaseDatabaseHelper.DataStatus() {
-                    @Override
-                    public void DataIsLoaded(List<Spot> spots, List<String> keys) {
-
-                    }
-
-                    @Override
-                    public void DataIsInserted() {
-                        Toast.makeText(MapsActivity.this,"The spot is free"
-                        ,Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void DataIsUpdated() {
-
-                    }
-
-                    @Override
-                    public void DataIsDeleted() {
-
-                    }
-                });
-
-                //Init FB share
-                FacebookSdk.sdkInitialize(this.getApplicationContext());
-                callbackManager = CallbackManager.Factory.create();
-                shareDialog = new ShareDialog(this);
-
-                ShareLinkContent linkContent = new ShareLinkContent.Builder()
-                        .setQuote("Parking spot at:")
-                        .setContentUrl(Uri.parse("https://maps.google.com/?q="+lat+","+lng))
-                        .build();
-
-                if(ShareDialog.canShow(ShareLinkContent.class)){
-                    shareDialog.show(linkContent);
-                }
-            }
-            // check if it is coming from free spots list activity
-            else if (incoming_intent.hasExtra("latitude")){
-                Log.d("incoming","good");
-            }
-        }
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -262,6 +182,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        Intent incoming_intent = getIntent();
 
         //hides ui buttons from the map
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -283,6 +204,86 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             marker = mMap.addMarker(new MarkerOptions()
                     .position(DEFAULT_LOCATION));
+        }
+
+        if(incoming_intent.getExtras()!=null){
+
+            // check if it is coming from notification
+            if(incoming_intent.hasExtra("Alarm")){
+
+                double lat = latestParking.getLocation().latitude;
+                double lng = latestParking.getLocation().longitude ;
+                Calendar time = Calendar.getInstance();
+                String day = String.valueOf(time.get(Calendar.DAY_OF_MONTH));
+                String month = String.valueOf(time.get(Calendar.MONTH)+1);
+
+                int hour = time.get(Calendar.HOUR_OF_DAY);
+                String strHour  ;
+                if (hour < 10)
+                    strHour = "0" +hour;
+                else
+                    strHour = String.valueOf(hour);
+
+                int minute = time.get(Calendar.MINUTE);
+                String strMinute  ;
+                if (minute < 10)
+                    strMinute = "0" + minute;
+                else
+                    strMinute = String.valueOf(minute);
+
+                String strTime = day + "/" + month + "  " + strHour + ":" + strMinute;
+
+                // upload to firebase db
+                Spot spot = new Spot();
+                spot.setLatitude(lat);
+                spot.setLongitude(lng);
+                spot.setTime(strTime);
+                spot.setAddress(getAddres(lat,lng));
+                new FirebaseDatabaseHelper().addSpot(spot, new FirebaseDatabaseHelper.DataStatus() {
+                    @Override
+                    public void DataIsLoaded(List<Spot> spots, List<String> keys) {
+
+                    }
+
+                    @Override
+                    public void DataIsInserted() {
+                        Toast.makeText(MapsActivity.this,"The spot is free"
+                                ,Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void DataIsUpdated() {
+
+                    }
+
+                    @Override
+                    public void DataIsDeleted() {
+
+                    }
+                });
+
+                //Init FB share
+                FacebookSdk.sdkInitialize(this.getApplicationContext());
+                callbackManager = CallbackManager.Factory.create();
+                shareDialog = new ShareDialog(this);
+
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setQuote("Parking spot at:")
+                        .setContentUrl(Uri.parse("https://maps.google.com/?q="+lat+","+lng))
+                        .build();
+
+                if(ShareDialog.canShow(ShareLinkContent.class)){
+                    shareDialog.show(linkContent);
+                }
+            }
+            // check if it is coming from free spots list activity
+            else if (incoming_intent.hasExtra("latitude")){
+                Log.d("MAP", incoming_intent.getDoubleExtra("latitude",0) + "  " +  incoming_intent.getDoubleExtra("longitude",0));
+                LatLng temp = new LatLng(
+                        incoming_intent.getDoubleExtra("latitude",0),
+                        incoming_intent.getDoubleExtra("longitude",0));
+                marker = mMap.addMarker(new MarkerOptions().position(temp));
+            }
         }
 
         //move marker on long click
