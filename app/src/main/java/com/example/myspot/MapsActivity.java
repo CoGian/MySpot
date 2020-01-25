@@ -64,7 +64,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Animation fabOpen, fabClose, fabCW, fabCounterCW;
     private TextView markerLabel, locationLabel;
     private boolean isMenuOpen = false;
-
+    private Parking latestParking;
     //format to display only two digits
     DecimalFormat df = new DecimalFormat();
 
@@ -184,7 +184,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        final Parking latestParking = DB.getLatestParking();
+        latestParking = DB.getLatestParking();
 
         // Add a marker for the most recent parking
         if (latestParking != null){
