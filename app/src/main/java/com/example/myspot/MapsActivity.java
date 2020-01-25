@@ -1,5 +1,7 @@
 package com.example.myspot;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -25,7 +27,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -78,8 +79,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(mapToolbar);
 
         DB.createAndOrLoadDB(getBaseContext());
-
-        printKeyHash();
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -176,7 +175,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Intent incoming_intent = getIntent();
-
         //hides ui buttons from the map
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -186,7 +184,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        Parking latestParking = DB.getLatestParking();
+        final Parking latestParking = DB.getLatestParking();
 
         // Add a marker for the most recent parking
         if (latestParking != null){
@@ -254,6 +252,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     }
                 });
+
+
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MapsActivity.this);
+                dialog.setTitle("Share");
+                dialog.setMessage("Do you wish to share your free parking spot with a friend on facebook messenger?");
+                dialog.setCancelable(true);
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+
+                dialog.setPositiveButton(
+                        "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int
+                                    id) {
+                                // share on fb messenger
+                                Intent sendIntent = new Intent();
+                                sendIntent.setAction(Intent.ACTION_SEND);
+                                sendIntent
+                                        .putExtra(Intent.EXTRA_TEXT,
+                                                "I have a free parking spot for you my brat on: https://maps.google.com/?q="+latestParking.getLocation().latitude+ ","+latestParking.getLocation().longitude );
+                                sendIntent.setType("text/plain");
+                                sendIntent.setPackage("com.facebook.orca");
+                                try {
+                                    startActivity(sendIntent);
+                                }
+                                catch (android.content.ActivityNotFoundException ex) {
+                                    Toast.makeText(MapsActivity.this,"Please Install Facebook Messenger", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+
+                dialog.setNegativeButton(
+                        "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert = dialog.create();
+                alert.show();
             }
             // check if it is coming from free spots list activity
             else if (incoming_intent.hasExtra("latitude")){
